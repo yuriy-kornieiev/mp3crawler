@@ -1,0 +1,44 @@
+
+
+
+
+
+CREATE TABLE `domains` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `url` varchar(2000) NOT NULL DEFAULT '',
+  `host` varchar(2000) NOT NULL DEFAULT '',
+  `scheme` varchar(10) NOT NULL DEFAULT '',
+  `user` varchar(1000) DEFAULT NULL,
+  `pass` varchar(1000) DEFAULT NULL,
+  `port` int(11) DEFAULT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `date_last_accessed` timestamp NOT NULL DEFAULT '0000-00-00 00:00:00',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+INSERT INTO `domains` (`id`, `url`, `host`, `scheme`, `user`, `pass`, `port`, `date_created`, `date_last_accessed`)
+VALUES
+	(1, 'http://hcmaslov.d-real.sci-nnov.ru/', 'hcmaslov.d-real.sci-nnov.ru', 'http', NULL, NULL, NULL, '2019-02-01 20:58:43', '0000-00-00 00:00:00');
+
+
+
+CREATE TABLE `pages` (
+  `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
+  `domain_id` bigint(20) unsigned NOT NULL,
+  `relative_url` varchar(5000) NOT NULL DEFAULT '',
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+
+CREATE TABLE `mp3s` (
+  `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
+  `acoust_id` varchar(37) DEFAULT NULL,
+  `url` varchar(5000) DEFAULT NULL,
+  `domain_id` bigint(20) NOT NULL,
+  `page_id` bigint(20) NOT NULL,
+  `date_created` timestamp NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+  `date_last_accessed` timestamp NULL DEFAULT NULL,
+  PRIMARY KEY (`id`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+

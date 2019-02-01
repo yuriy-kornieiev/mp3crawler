@@ -44,6 +44,18 @@ func main() {
 	log.Printf("Start time: " + time.Now().Format(layout))
 	log.Printf("Environment: " + cpl.Environment)
 
+	queue := make(chan string)
+
+	go func() {
+		queue <- "http://hcmaslov.d-real.sci-nnov.ru/"
+	}()
+
+	for uri := range queue {
+		Crawler{}.enqueue(uri, queue)
+	}
+
+	//Crawler{}.Start(startPage)
+
 	elapsed := time.Since(start)
 	log.Printf("Took %s", elapsed)
 	log.Printf("End time: " + time.Now().Format(layout))
