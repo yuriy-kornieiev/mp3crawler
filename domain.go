@@ -39,16 +39,14 @@ func (d Domain) GetDomain(url url.URL) bool {
 
 	t1, _ := time.Parse(layout, val)
 	t2, _ := time.Parse(layout, currentTime)
-	t1.Add(time.Second * 20)
-
-	//fmt.Println(val, t1, t2, t1.After(t2))
+	t1 = t1.Add(time.Second * 20)
 
 	if t2.After(t1) {
-		return false
+		client.Set("domain:"+url.Host, currentTime, 0)
+		return true
 	}
 
-	client.Set("domain:"+url.Host, currentTime, 0)
-	return true
+	return false
 }
 
 func (d Domain) Get(url url.URL) Domain {
