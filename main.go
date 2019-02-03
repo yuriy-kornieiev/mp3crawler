@@ -47,14 +47,14 @@ func main() {
 	queue := make(chan string)
 
 	go func() {
-		queue <- "http://hcmaslov.d-real.sci-nnov.ru/"
+		//queue <- "http://hcmaslov.d-real.sci-nnov.ru/"
+		queue <- "http://ukr.net/"
+		//queue <- "https://alexandr-rogers.livejournal.com/1091602.html"
 	}()
 
 	for uri := range queue {
 		Crawler{}.enqueue(uri, queue)
 	}
-
-	//Crawler{}.Start(startPage)
 
 	elapsed := time.Since(start)
 	log.Printf("Took %s", elapsed)

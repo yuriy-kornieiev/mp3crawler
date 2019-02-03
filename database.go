@@ -76,9 +76,9 @@ func (d *Database) OpenConnection() *sql.DB {
 
 	log.Println("DB Connection established: " + d.Host + ":" + d.Port + "/" + d.DB)
 
-	d.Connection.SetConnMaxLifetime(time.Minute * 5)
-	d.Connection.SetMaxIdleConns(5)
-	d.Connection.SetMaxOpenConns(100)
+	d.Connection.SetConnMaxLifetime(time.Minute * 10)
+	d.Connection.SetMaxIdleConns(10)
+	d.Connection.SetMaxOpenConns(10)
 
 	return d.Connection
 }

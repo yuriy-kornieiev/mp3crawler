@@ -26,4 +26,5 @@ Should work like http://beemp3s.org/
  # Requirements:
  1. Manages request delays and maximum concurrency per domain
  2. Cookie and session handling
+ 3. Max depth
  

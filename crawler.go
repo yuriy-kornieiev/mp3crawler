@@ -2,50 +2,84 @@ package main
 
 import (
 	"crypto/tls"
-	"fmt"
 	"golang.org/x/net/html"
 	"io"
+	"log"
 	"net/http"
 	"net/url"
+	"path"
+	"regexp"
 	"strconv"
 	"strings"
+	"time"
 )
 
 type Crawler struct {
 }
 
-func (c Crawler) Start(startPage string) {
+var allowedExtensions = []string{"", ".html", ".htm", ".php", ".txt", ".json", ".xml", ".bml", ".cgi"}
 
-	//re1 := regexp.MustCompile(`https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)`)
-	//
-	//html, err := ioutil.ReadAll(resp.Body)
-	//if err != nil {
-	//	panic(err)
-	//}
-	//
-	//fmt.Printf("%q\n", re1.FindAllString(string(html), -1))
+var linkRegexp = regexp.MustCompile(`https?:\/\/(www\.)?[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)`)
+var mp3Regexp = regexp.MustCompile(`((https?|ftp):((//)|(\\\\))+[\w\d:#@%/;$()~_?\+-=\\\.&]*\.mp3)`)
 
-}
+//	fmt.Printf("%q\n", mp3Regexp.FindAllString(string(html), -1))
 
 func (c Crawler) enqueue(uri string, queue chan string) {
-	fmt.Println("fetching", uri)
+
+	url, err := url.Parse(uri)
+	if err != nil {
+		return
+	}
+
+	if !(Domain{}.GetDomain(*url)) {
+		//log.Println("delay", "domain", uri)
+		go func() { queue <- uri }() // We asynchronously enqueue what we've found
+		return
+	}
+
+	for _, domain := range domainSkipList {
+		if strings.Contains(url.Host, domain) {
+			log.Println("skip", "domain", uri)
+			return
+		}
+	}
+
+	ext := path.Ext(url.Path)
+	if len(ext) > 0 {
+		if ok, _ := inArray(ext, allowedExtensions); !ok {
+			log.Println("skip", ext, uri)
+			return
+		}
+	}
+
+	start := time.Now()
+
 	transport := &http.Transport{
 		TLSClientConfig: &tls.Config{
 			InsecureSkipVerify: true,
 		},
 	}
 	client := http.Client{Transport: transport}
-	resp, err := client.Get(uri)
+	req, err := http.NewRequest("GET", uri, nil)
+	if err != nil {
+		log.Fatalln(err)
+	}
+
+	req.Header.Set("User-Agent", "MP3_Spider_Bot/0.1a")
+
+	resp, err := client.Do(req)
 	if err != nil {
 		return
 	}
 	defer resp.Body.Close()
 
+	log.Println("ok", ext, resp.StatusCode, uri, time.Since(start))
+
 	links := c.All(resp.Body)
 
 	for _, link := range links {
 		absolute := c.fixUrl(link, uri)
-		if uri != "" {
+		if absolute != "" {
 			go func() { queue <- absolute }() // We asynchronously enqueue what we've found
 		}
 	}
