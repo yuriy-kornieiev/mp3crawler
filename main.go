@@ -4,6 +4,7 @@ import (
 	"github.com/fatih/color"
 	"log"
 	"os"
+	"runtime"
 	"time"
 )
 
@@ -14,6 +15,8 @@ const layout = "2006-01-02 15:04:05"
 var config Config
 
 func main() {
+
+	runtime.GOMAXPROCS(runtime.NumCPU())
 
 	// Profiling: https://flaviocopes.com/golang-profiling/
 	//defer profile.Start().Stop()

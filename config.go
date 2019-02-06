@@ -5,6 +5,14 @@ import (
 	"github.com/go-redis/redis"
 )
 
+//const (
+//	BASE_PARSE_NAME     = "base"
+//	SPIDERS_STATUS_INIT = iota
+//	SPIDERS_STATUS_RUNNING
+//	SPIDERS_STATUS_STOP
+//	SPIDERS_BASIC_COOKIE
+//)
+
 type Config struct {
 	Databases map[string]map[string]*Database
 	//ActiveMQ    map[string]string
